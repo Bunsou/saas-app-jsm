@@ -1,9 +1,8 @@
 "use client";
 
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useUser } from "@clerk/nextjs";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -22,21 +21,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { subjects } from "@/constants";
-import { Textarea } from "./ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
+import { createCompanion } from "@/lib/actions/companion.actions";
+import { redirect } from "next/navigation";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Companion is required" }),
-  subject: z.string().min(1, { message: "Subject is required" }),
-  topic: z.string().min(1, { message: "Topic is required" }),
-  voice: z.string().min(1, { message: "Voice is required" }),
-  style: z.string().min(1, { message: "Style is required" }),
-  duration: z.coerce.number().min(1, { message: "duration is required" }),
+  name: z.string().min(1, { message: "Companion is required." }),
+  subject: z.string().min(1, { message: "Subject is required." }),
+  topic: z.string().min(1, { message: "Topic is required." }),
+  voice: z.string().min(1, { message: "Voice is required." }),
+  style: z.string().min(1, { message: "Style is required." }),
+  duration: z.coerce.number().min(1, { message: "Duration is required." }),
 });
 
 const CompanionForm = () => {
-  const { user } = useUser();
-
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,12 +47,15 @@ const CompanionForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log({
-      ...values,
-      userId: user?.id,
-      userEmail: user?.emailAddresses[0]?.emailAddress,
-    });
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const companion = await createCompanion(values);
+
+    if (companion) {
+      redirect(`/companions/${companion.id}`);
+    } else {
+      console.log("Failed to create a companion");
+      redirect("/");
+    }
   };
 
   return (
@@ -95,8 +96,8 @@ const CompanionForm = () => {
                   <SelectContent>
                     {subjects.map((subject) => (
                       <SelectItem
-                        key={subject}
                         value={subject}
+                        key={subject}
                         className="capitalize"
                       >
                         {subject}
@@ -126,6 +127,7 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="voice"
@@ -176,6 +178,7 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="duration"
@@ -194,9 +197,8 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
-
         <Button type="submit" className="w-full cursor-pointer">
-          Build Your Campanion
+          Build Your Companion
         </Button>
       </form>
     </Form>

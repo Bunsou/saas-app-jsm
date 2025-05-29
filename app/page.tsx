@@ -1,6 +1,7 @@
 import CompanionCard from "@/components/CompanionCard";
 import CompanionList from "@/components/CompanionList";
 import CTA from "@/components/CTA";
+import WelcomeMessage from "@/components/WelcomeMessage";
 import { recentSessions } from "@/constants";
 
 import React from "react";
@@ -8,6 +9,7 @@ import React from "react";
 const Page = () => {
   return (
     <main>
+      <WelcomeMessage />
       <h1 className="text-2xl underline">Popular Companions</h1>
       <section className="home-section">
         <CompanionCard

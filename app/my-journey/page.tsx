@@ -1,17 +1,18 @@
-import CompanionList from "@/components/CompanionList";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import {
   getUserCompanions,
   getUserSessions,
+  getBookmarkedCompanions,
 } from "@/lib/actions/companion.actions";
-import { currentUser } from "@clerk/nextjs/server";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import CompanionList from "@/components/CompanionList";
 
 const Profile = async () => {
   const user = await currentUser();
@@ -20,6 +21,7 @@ const Profile = async () => {
 
   const companions = await getUserCompanions(user.id);
   const sessionHistory = await getUserSessions(user.id);
+  const bookmarkedCompanions = await getBookmarkedCompanions(user.id);
 
   return (
     <main className="min-lg:w-3/4">
@@ -40,13 +42,12 @@ const Profile = async () => {
             </p>
           </div>
         </div>
-
         <div className="flex gap-4">
-          <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit">
+          <div className="border border-black rouded-lg p-3 gap-2 flex flex-col h-fit">
             <div className="flex gap-2 items-center">
               <Image
                 src="/icons/check.svg"
-                alt="Check Icon"
+                alt="checkmark"
                 width={22}
                 height={22}
               />
@@ -54,22 +55,27 @@ const Profile = async () => {
             </div>
             <div>Lessons completed</div>
           </div>
-
-          <div className="border border-black rounded-lg p-3 gap-2 flex flex-col h-fit">
+          <div className="border border-black rouded-lg p-3 gap-2 flex flex-col h-fit">
             <div className="flex gap-2 items-center">
-              <Image
-                src="/icons/cap.svg"
-                alt="Cap Icon"
-                width={22}
-                height={22}
-              />
+              <Image src="/icons/cap.svg" alt="cap" width={22} height={22} />
               <p className="text-2xl font-bold">{companions.length}</p>
             </div>
-            <div>Companions completed</div>
+            <div>Companions created</div>
           </div>
         </div>
       </section>
       <Accordion type="multiple">
+        <AccordionItem value="bookmarks">
+          <AccordionTrigger className="text-2xl font-bold">
+            Bookmarked Companions {`(${bookmarkedCompanions.length})`}
+          </AccordionTrigger>
+          <AccordionContent>
+            <CompanionList
+              companions={bookmarkedCompanions}
+              title="Bookmarked Companions"
+            />
+          </AccordionContent>
+        </AccordionItem>
         <AccordionItem value="recent">
           <AccordionTrigger className="text-2xl font-bold">
             Recent Sessions
@@ -86,16 +92,11 @@ const Profile = async () => {
             My Companions {`(${companions.length})`}
           </AccordionTrigger>
           <AccordionContent>
-            <CompanionList
-              title="My Companions"
-              companions={companions}
-              classNames="w-2/3 max-lg:w-full"
-            />
+            <CompanionList title="My Companions" companions={companions} />
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     </main>
   );
 };
-
 export default Profile;

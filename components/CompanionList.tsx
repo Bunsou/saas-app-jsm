@@ -7,20 +7,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn, getSubjectColor } from "@/lib/utils";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
-interface CompanionListProps {
+interface CompanionsListProps {
   title: string;
   companions?: Companion[];
   classNames?: string;
 }
 
-const CompanionList = ({
+const CompanionsList = ({
   title,
   companions,
   classNames,
-}: CompanionListProps) => {
+}: CompanionsListProps) => {
   return (
     <article className={cn("companion-list", classNames)}>
       <h2 className="font-bold text-3xl">{title}</h2>
@@ -36,7 +36,7 @@ const CompanionList = ({
         <TableBody>
           {companions?.map(({ id, subject, name, topic, duration }) => (
             <TableRow key={id}>
-              <TableCell className="font-medium">
+              <TableCell>
                 <Link href={`/companions/${id}`}>
                   <div className="flex items-center gap-2">
                     <div
@@ -80,7 +80,7 @@ const CompanionList = ({
                   </p>
                   <Image
                     src="/icons/clock.svg"
-                    alt="duration"
+                    alt="minutes"
                     width={14}
                     height={14}
                     className="md:hidden"
@@ -95,4 +95,4 @@ const CompanionList = ({
   );
 };
 
-export default CompanionList;
+export default CompanionsList;

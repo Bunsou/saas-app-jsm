@@ -55,7 +55,6 @@ const CompanionComponent = ({
         const newMessage = { role: message.role, content: message.transcript };
         setMessages((prev) => [newMessage, ...prev]);
       }
-      console.log();
     };
 
     const onSpeechStart = () => setIsSpeaking(true);
@@ -95,7 +94,7 @@ const CompanionComponent = ({
       serverMessages: [],
     };
 
-    // @ts-expect-error - vapi is not typed yet
+    // @ts-expect-error - vapi is not typed
     vapi.start(configureAssistant(voice, style), assistantOverrides);
   };
 
@@ -105,7 +104,7 @@ const CompanionComponent = ({
   };
 
   return (
-    <section className="flex flex-col h-[70vh]">
+    <section className="flex flex-col h-[100vh]">
       <section className="flex gap-8 max-sm:flex-col">
         <div className="companion-section">
           <div
@@ -204,9 +203,6 @@ const CompanionComponent = ({
                   {message.content}
                 </p>
               );
-              {
-                console.log(message.content);
-              }
             } else {
               return (
                 <p key={index} className="text-primary max-sm:text-sm">
